@@ -41,7 +41,7 @@ import time
 import rclpy
 import rclpy.utilities
 
-from sound_play.libsoundplay import SoundClient
+from libsoundplay import SoundClient
 
 
 if __name__ == '__main__':

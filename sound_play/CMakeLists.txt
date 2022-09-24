@@ -42,10 +42,15 @@ install(PROGRAMS
   scripts/say.py
   scripts/shutup.py
   scripts/soundplay_node.py
+  scripts/libsoundplay.py
   # scripts/test.py
   # scripts/test_actionlib_client.py
   DESTINATION lib/${PROJECT_NAME}
 )
+#install(PROGRAMS
+#        scripts/libsoundplay.py
+#        DESTINATION share/${PROJECT_NAME}
+#        )
 
 install(DIRECTORY include/${PROJECT_NAME}/
   DESTINATION include/${PROJECT_NAME}
