@@ -94,7 +94,7 @@ class Sound(object):
 class SoundClient(object):
     def __init__(
             self, node, blocking=False, sound_action='sound_play',
-            sound_topic='robotsound'
+            sound_topic=None
     ):
         """Sound client for soundplay_node.
 
@@ -125,7 +125,8 @@ class SoundClient(object):
         self.node = node
         self.actionclient = rclpy.action.ActionClient(
             self.node, SoundRequestAction, sound_action)
-        self.pub = self.node.create_publisher(SoundRequest, sound_topic, 5)
+        if sound_topic is not None:
+            self.pub = self.node.create_publisher(SoundRequest, sound_topic, 5)
         self.sub = self.node.create_subscription(
             GoalStatusArray,
             '{}/_action/status'.format(sound_action),

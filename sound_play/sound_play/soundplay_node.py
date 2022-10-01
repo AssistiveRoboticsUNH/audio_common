@@ -245,8 +245,8 @@ class SoundPlayNode(rclpy.node.Node):
         self.active_sounds = 0
 
         self.mutex = threading.Lock()
-        self.sub = self.create_subscription(
-            SoundRequest, "robotsound", self.callback, 10)
+        # self.sub = self.create_subscription(
+        #     SoundRequest, "robotsound", self.callback, 10)
         self._as = rclpy.action.ActionServer(
             self, SoundRequestAction, 'sound_play',
             execute_callback=self.execute_cb,
@@ -344,8 +344,7 @@ class SoundPlayNode(rclpy.node.Node):
             if voice_key not in self.voicesounds.keys():
                 self.get_logger().debug(
                     'command for uncached text: "%s"' % voice_key)
-                txtfile = tempfile.NamedTemporaryFile(
-                    prefix='sound_play', suffix='.txt')
+                txtfile = tempfile.NamedTemporaryFile(prefix='sound_play', suffix='.txt')
                 (wavfile, wavfilename) = tempfile.mkstemp(
                     prefix='sound_play', suffix='.wav')
                 txtfilename = txtfile.name
@@ -357,6 +356,7 @@ class SoundPlayNode(rclpy.node.Node):
                             txtfile.write(
                                 data.arg.decode('UTF-8').encode('ISO-8859-15'))
                         else:
+                            txtfile.write(' '.encode('ISO-8859-15'))
                             txtfile.write(data.arg.encode('ISO-8859-15'))
                     except UnicodeEncodeError:
                         if hasattr(data.arg, 'decode'):
@@ -364,9 +364,14 @@ class SoundPlayNode(rclpy.node.Node):
                         else:
                             txtfile.write(data.arg.encode('UTF-8'))
                     txtfile.flush()
-                    os.system(
-                        "text2wave -eval '("+voice+")' "
-                        + txtfilename + " -o " + wavfilename)
+                    os.system("text2wave -eval '("+voice+")' " + txtfilename + " -o " + wavfilename)
+                    # os.system("pico2wave -l en-US -w" + wavfilename + f' "{data.arg}"')
+                    wavfilename_new = wavfilename.replace('.wav','')
+                    wavfilename_new += '_new.wav'
+                    os.system("ffmpeg -i " + wavfilename + " -af areverse,apad=pad_dur=500ms,areverse " + wavfilename_new)
+                    wavfilename = wavfilename_new
+                    # ffmpeg -i sound_play1gi8itua.wav -af areverse,apad=pad_dur=1s,areverse audio_out.wav
+
                     try:
                         if os.stat(wavfilename).st_size == 0:
                             # So we hit the same catch block
