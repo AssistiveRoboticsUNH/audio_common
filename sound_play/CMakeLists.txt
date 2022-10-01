@@ -10,47 +10,28 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 find_package(ament_cmake REQUIRED)
-find_package(rosidl_default_generators REQUIRED)
+find_package(ament_cmake_python REQUIRED)
 find_package(audio_common_msgs REQUIRED)
 find_package(action_msgs REQUIRED)
 
-include_directories(rclcpp audio_common_msgs action_msgs builtin_interfaces)
-
-set(msg_files
-  "msg/SoundRequest.msg"
-)
-
-set(action_files
-  "action/SoundRequest.action"
-)
-
-rosidl_generate_interfaces(${PROJECT_NAME}
-  ${msg_files}
-  ${action_files}
-  DEPENDENCIES
-    action_msgs
-    audio_common_msgs
-    builtin_interfaces
-)
-
-#ament_python_install_package(${PROJECT_NAME})
+ament_python_install_package(sound_play)
 
 install(PROGRAMS
-  scripts/is_speaking.py
-  scripts/playbuiltin.py
-  scripts/play.py
-  scripts/say.py
-  scripts/shutup.py
-  scripts/soundplay_node.py
-  scripts/libsoundplay.py
+        sound_play/is_speaking.py
+        sound_play/playbuiltin.py
+        sound_play/play.py
+        sound_play/say.py
+        sound_play/shutup.py
+        sound_play/soundplay_node.py
+        sound_play/libsoundplay.py
   # scripts/test.py
   # scripts/test_actionlib_client.py
   DESTINATION lib/${PROJECT_NAME}
 )
-#install(PROGRAMS
-#        scripts/libsoundplay.py
-#        DESTINATION share/${PROJECT_NAME}
-#        )
+install(PROGRAMS
+        sound_play/libsoundplay.py
+        DESTINATION share/${PROJECT_NAME}
+        )
 
 install(DIRECTORY include/${PROJECT_NAME}/
   DESTINATION include/${PROJECT_NAME}
@@ -64,6 +45,5 @@ install(DIRECTORY sounds
   DESTINATION share/${PROJECT_NAME}
 )
 
-ament_export_dependencies(rosidl_default_runtime)
 
 ament_package()
